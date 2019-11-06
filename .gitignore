@@ -1,0 +1,11 @@
+# VS Code Local Settings
+.vscode/
+
+# Python Environment
+env/
+
+# Byte-compiled / optimized / DLL files
+__pychache__/
+
+# Others
+media/
