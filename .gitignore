@@ -5,7 +5,7 @@
 env/
 
 # Byte-compiled / optimized / DLL files
-__pychache__/
+__pycache__/
 
 # Others
 media/
