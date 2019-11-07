@@ -37,6 +37,15 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+
+    # project apps
+    'backend.users',
+
+    # third-party apps
+    'rest_framework',
+    'django_extensions',
+    'corsheaders',
+
 ]
 
 MIDDLEWARE = [
@@ -47,6 +56,9 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+
+    # thrid-party middleware
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'backend.urls'
@@ -84,6 +96,7 @@ DATABASES = {
     }
 }
 
+AUTH_USER_MODEL = 'users.User'
 
 # Password validation
 # https://docs.djangoproject.com/en/2.2/ref/settings/#auth-password-validators
@@ -103,13 +116,18 @@ AUTH_PASSWORD_VALIDATORS = [
     },
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_PAGINATION_CLASS': 'backend.utils.pagination.DefaultResultsSetPagination'
+}
+
+CORS_ORIGIN_ALLOW_ALL = True
 
 # Internationalization
 # https://docs.djangoproject.com/en/2.2/topics/i18n/
 
 LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'UTC'
+TIME_ZONE = 'Asia/Manila'
 
 USE_I18N = True
 
@@ -122,3 +140,21 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/2.2/howto/static-files/
 
 STATIC_URL = '/static/'
+
+MEDIA_ROOT = 'media/'
+MEDIA_URL = '/media/'
+
+# project conventions
+MAX_LENGTH_NAME = 30
+MAX_LENGTH_USERNAME = 30
+MAX_LENGTH_CONTACT_NUMBER = 15
+MAX_LENGTH_SHORT_DESCRIPTION = 50
+MAX_LENGTH_TRAVELLERS_LIST = 15
+MAX_LENGTH_NATIONALITY = 20
+MAX_LENGTH_ADDRESS = 100
+MAX_LENGTH_NATIONALITY = 20
+MAX_LENGTH_AGENCY_CODE = 3
+MAX_LENGTH_LICENSE_NUMBER = 13
+MAX_LENGTH_RESTRICTION_NUMBERS = 8
+MAX_LENGTH_EYE_COLOR = 10
+MAX_LENGTH_SHORT_DESCRIPTION = 150
