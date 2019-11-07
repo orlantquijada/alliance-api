@@ -14,7 +14,8 @@ class TimestampFieldsMixin(models.Model):
 
 class ContactMixin(models.Model):
     first_name = models.CharField(max_length=settings.MAX_LENGTH_NAME)
-    middle_name = models.CharField(max_length=settings.MAX_LENGTH_NAME)
+    middle_name = models.CharField(
+        max_length=settings.MAX_LENGTH_NAME, blank=True, null=True)
     last_name = models.CharField(max_length=settings.MAX_LENGTH_NAME)
     email = models.EmailField(unique=True, null=True, blank=True)
     contact_number = models.CharField(

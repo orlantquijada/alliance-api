@@ -24,3 +24,22 @@ CONDITION_CODES = (
     (DAYLIGHT, 'Daylight driving only'),
     (HERING, 'Should always be accompanied by a person without hearing impairment')
 )
+
+OP = 'O+'
+ON = 'O-'
+AP = 'A+'
+AN = 'A-'
+BP = 'B+'
+BN = 'B-'
+ABP = 'AB+'
+ABN = 'AB-'
+BLOOD_TYPES = (
+    (OP, OP),
+    (ON, ON),
+    (AP, AP),
+    (AN, AN),
+    (BP, BP),
+    (BN, BN),
+    (ABP, ABP),
+    (ABN, ABN)
+)
