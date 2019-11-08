@@ -24,7 +24,7 @@ class User(AbstractBaseUser, PermissionsMixin, mixins.TimestampFieldsMixin, mixi
     class Meta:
         ordering = ('-created_at',)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.username}'
 
 
@@ -55,7 +55,7 @@ class Profile(mixins.ContactMixin):
     birth_date = models.DateField('Birth Date')
     points = models.PositiveIntegerField(default=20)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return self.full_name
 
     def save(self, *args, **kwargs):
@@ -79,7 +79,7 @@ class License(models.Model):
     license_number = models.CharField(
         'License Number', max_length=settings.MAX_LENGTH_LICENSE_NUMBER)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.license_number}'
 
 
@@ -88,7 +88,7 @@ class Driver(models.Model):
     profile = models.OneToOneField(Profile, on_delete=models.CASCADE)
     license = models.OneToOneField(License, on_delete=models.PROTECT)
 
-    def __str__(self):
+    def __str__(self) -> str:
         return f'{self.profile}'
 
 
@@ -107,6 +107,6 @@ class Fee(models.Model):
 
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
 
-    def __str__(self):
+    def __str__(self) -> str:
         paid = 'paid' if self.is_paid == True else 'not paid'
         return f'{self.driver} - {self.fee_type} - P{self.amount} - {paid}'
