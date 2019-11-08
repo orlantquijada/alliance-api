@@ -11,5 +11,6 @@ ROUTER.register('profiles', views.ProfileViewSet)
 ROUTER.register('drivers', views.DriverViewSet)
 ROUTER.register('licenses', views.LicenseViewSet)
 ROUTER.register('fees', views.FeeViewSet)
+ROUTER.register('users', views.UserViewSet)
 
 url_patterns = path('', include(ROUTER.urls))

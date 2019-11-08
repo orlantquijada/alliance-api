@@ -1,3 +1,4 @@
+
 from rest_framework import serializers
 
 from backend.users import models
@@ -34,20 +35,31 @@ class LicenseSerializer(serializers.ModelSerializer):
         )
 
 
+class UserSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = models.User
+        fields = ('id', 'username')
+
+
 class DriverSerializer(serializers.ModelSerializer):
     # pylint: disable=no-member
 
+    user_id = serializers.PrimaryKeyRelatedField(
+        source='user', queryset=models.User.objects.all())
     license_id = serializers.PrimaryKeyRelatedField(
         source='license', queryset=models.License.objects.all())
     profile_id = serializers.PrimaryKeyRelatedField(
         source='profile', queryset=models.Profile.objects.all())
 
+    user = UserSerializer(read_only=True)
     profile = ProfileSerializer(read_only=True)
     license = LicenseSerializer(read_only=True)
 
     class Meta:
         model = models.Driver
-        fields = ('id', 'license_id', 'profile_id', 'license', 'profile')
+        fields = ('id', 'user_id', 'license_id',
+                  'profile_id', 'user', 'license', 'profile')
 
 
 class FeeSerializer(serializers.ModelSerializer):

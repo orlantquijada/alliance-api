@@ -27,7 +27,7 @@ class ContactMixin(models.Model):
         abstract = True
 
     @property
-    def full_name(self):
+    def full_name(self) -> str:
         if self.middle_name:
             return '%s %s. %s' % (self.first_name, self.middle_name[0], self.last_name)
         return '%s %s' % (self.first_name, self.last_name)
