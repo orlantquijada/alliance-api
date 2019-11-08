@@ -43,3 +43,20 @@ BLOOD_TYPES = (
     (ABP, ABP),
     (ABN, ABN)
 )
+
+COLLISION = 'CO'
+CLAMPED = 'CL'
+TOW = 'TO'
+OK = 'OK'
+STATUS_TYPES = (
+    (COLLISION, 'Traffic Collision'),
+    (CLAMPED, 'Clamped'),
+    (TOW, 'Towed'),
+    (OK, 'OK')
+)
+
+STATUS = 'S'
+VIOLATION = 'V'
+NOTIFICATION_TYPES = (
+    ()
+)
