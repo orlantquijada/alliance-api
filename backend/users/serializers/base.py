@@ -33,13 +33,13 @@ class LicenseSerializer(serializers.ModelSerializer):
 
 
 class ViolationSerializer(serializers.ModelSerializer):
-    date_issued = serializers.DateField(
-        format=globals.DATE_FORMAT, input_formats=(globals.DATE_FORMAT,))
+    datetime_issued = serializers.DateTimeField(
+        format=globals.DATETIME_FORMAT, input_formats=(globals.DATETIME_FORMAT,))
 
     class Meta:
         model = models.Violation
         fields = ('id', 'name', 'short_description',
-                  'description', 'date_issued')
+                  'description', 'datetime_issued', 'parties_involved')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -72,8 +72,6 @@ class DriverSerializer(serializers.ModelSerializer):
 class FeeSerializer(serializers.ModelSerializer):
     # pylint: disable=no-member
 
-    date_issued = serializers.DateField(
-        format=globals.DATE_FORMAT, input_formats=(globals.DATE_FORMAT,))
     deadline = serializers.DateField(
         format=globals.DATE_FORMAT, input_formats=(globals.DATE_FORMAT,)
     )
@@ -88,6 +86,18 @@ class FeeSerializer(serializers.ModelSerializer):
     class Meta:
         model = models.Fee
         fields = (
-            'id',  'driver_id', 'violation_id', 'date_issued', 'deadline',
+            'id',  'driver_id', 'violation_id', 'deadline',
             'is_paid', 'amount', 'driver', 'violation'
         )
+
+
+class VehicleSerializer(serializers.ModelSerializer):
+    # pylint: disable=no-member
+
+    driver_id = serializers.PrimaryKeyRelatedField(
+        source='driver', queryset=models.Driver.objects.all())
+    driver = DriverSerializer(read_only=True)
+
+    class Meta:
+        model = models.Vehicle
+        fields = ('id', 'driver_id', 'driver', 'make', 'model', 'year')

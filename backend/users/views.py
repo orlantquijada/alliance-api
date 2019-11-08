@@ -136,3 +136,31 @@ class ViolationViewSet(mixins.CreateModelMixin,
 
     queryset = models.Violation.objects.all()
     serializer_class = serializers.base.ViolationSerializer
+
+
+class VehicleViewSet(mixins.CreateModelMixin,
+                     mixins.ListModelMixin,
+                     mixins.RetrieveModelMixin,
+                     mixins.UpdateModelMixin,
+                     mixins.DestroyModelMixin,
+                     viewsets.GenericViewSet):
+
+    # pylint: disable=no-member
+
+    queryset = models.Vehicle.objects
+    serializer_class = serializers.base.VehicleSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+
+        serializer = serializers.query.VehicleQuerySerializer(
+            data=self.request.query_params)
+
+        if not serializer.is_valid():
+            return queryset.all()
+
+        driver_id = serializer.validated_data.get('driver_id', None)
+        if driver_id:
+            queryset = queryset.filter(driver_id=driver_id)
+
+        return queryset.all()

@@ -16,7 +16,7 @@ class User(AbstractBaseUser, PermissionsMixin, mixins.TimestampFieldsMixin, mixi
         max_length=settings.MAX_LENGTH_USERNAME, unique=True)
 
     user_type = models.CharField(
-        'User Type', max_length=1, choices=choices.USER_TYPES)
+        'User Type', max_length=1, choices=choices.USER_TYPES, default=choices.DRIVER)
 
     USERNAME_FIELD = 'username'
 
@@ -74,7 +74,7 @@ class License(models.Model):
     restriction_numbers = models.CharField(
         'Restriction Numbers', max_length=settings.MAX_LENGTH_RESTRICTION_NUMBERS)
     condition_code = models.CharField(
-        max_length=1, choices=choices.CONDITION_CODES)
+        max_length=1, choices=choices.CONDITION_CODES, null=True, blank=True)
     agency_code = models.CharField(
         'Agency Code', max_length=settings.MAX_LENGTH_AGENCY_CODE)
     license_number = models.CharField(
@@ -101,14 +101,16 @@ class Violation(models.Model):
         blank=True, null=True
     )
     description = models.TextField()
-    date_issued = models.DateField('Date Issued', default=timezone.now)
+    datetime_issued = models.DateTimeField(
+        'Datetime Issued')
+    parties_involved = models.CharField(
+        'Parties Involved', max_length=100, blank=True, null=True)
 
     def __str__(self):
-        return self.name
+        return f'{self.name} - {self.datetime_issued}'
 
 
 class Fee(models.Model):
-    date_issued = models.DateField('Date Issued')
     deadline = models.DateField()
     amount = models.DecimalField(decimal_places=2, max_digits=10)
     is_paid = models.BooleanField(default=False)
@@ -116,6 +118,46 @@ class Fee(models.Model):
     driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
     violation = models.ForeignKey(Violation, on_delete=models.CASCADE)
 
+    class Meta:
+        default_related_name = 'fees'
+
     def __str__(self) -> str:
-        paid = 'paid' if self.is_paid == True else 'not paid'
+        paid = 'paid' if self.is_paid else 'not paid'
         return f'{self.driver} - {self.violation.name} - P{self.amount} - {paid}'
+
+
+class Vehicle(models.Model):
+    make = models.CharField(max_length=settings.MAX_LENGTH_NAME)
+    model = models.CharField(max_length=settings.MAX_LENGTH_NAME)
+    year = models.PositiveIntegerField()
+    plate_number = models.CharField(
+        max_length=settings.MAX_LENGTH_PLATE_NUMBER)
+
+    status_type = models.CharField(
+        max_length=2, choices=choices.STATUS_TYPES, default=choices.OK)
+
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
+
+    class Meta:
+        default_related_name = 'vehicles'
+
+    def __str__(self) -> str:
+        # pylint: disable=no-member
+
+        return f'{self.make} - {self.model} - {self.year} - {self.driver.profile.full_name}'
+
+
+class Notification(models.Model):
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
+    is_viewed = models.BooleanField(default=False)
+    description = models.CharField(
+        max_length=settings.MAX_LENGTH_SHORT_DESCRIPTION)
+
+    class Meta:
+        default_related_name = 'notifications'
+
+    def __str__(self) -> str:
+        # pylint: disable=no-member
+
+        viewed = 'viewed' if self.is_viewed else 'not viewed'
+        return f'{self.driver.profile.full_name} - {viewed}'
