@@ -1,4 +1,3 @@
-
 from rest_framework import serializers
 
 from backend.users import models
@@ -21,11 +20,9 @@ class ProfileSerializer(serializers.ModelSerializer):
 
 class LicenseSerializer(serializers.ModelSerializer):
     date_issued = serializers.DateField(
-        format=globals.DATE_FORMAT, input_formats=(globals.DATE_FORMAT,)
-    )
+        format=globals.DATE_FORMAT, input_formats=(globals.DATE_FORMAT,))
     date_of_expiry = serializers.DateField(
-        format=globals.DATE_FORMAT, input_formats=(globals.DATE_FORMAT,)
-    )
+        format=globals.DATE_FORMAT, input_formats=(globals.DATE_FORMAT,))
 
     class Meta:
         model = models.License
@@ -33,6 +30,16 @@ class LicenseSerializer(serializers.ModelSerializer):
             'id', 'date_issued', 'date_of_expiry', 'restriction_numbers',
             'condition_code', 'agency_code', 'license_number'
         )
+
+
+class ViolationSerializer(serializers.ModelSerializer):
+    date_issued = serializers.DateField(
+        format=globals.DATE_FORMAT, input_formats=(globals.DATE_FORMAT,))
+
+    class Meta:
+        model = models.Violation
+        fields = ('id', 'name', 'short_description',
+                  'description', 'date_issued')
 
 
 class UserSerializer(serializers.ModelSerializer):
@@ -58,8 +65,8 @@ class DriverSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = models.Driver
-        fields = ('id', 'user_id', 'license_id',
-                  'profile_id', 'user', 'license', 'profile')
+        fields = ('id', 'user_id', 'license_id', 'profile_id',
+                  'user', 'license', 'profile')
 
 
 class FeeSerializer(serializers.ModelSerializer):
@@ -74,10 +81,13 @@ class FeeSerializer(serializers.ModelSerializer):
     driver_id = serializers.PrimaryKeyRelatedField(
         source='driver', queryset=models.Driver.objects.all())
     driver = DriverSerializer(read_only=True)
+    violation_id = serializers.PrimaryKeyRelatedField(
+        source='violation', queryset=models.Violation.objects.all())
+    violation = ViolationSerializer(read_only=True)
 
     class Meta:
         model = models.Fee
         fields = (
-            'id',  'driver_id', 'fee_type', 'date_issued', 'deadline', 'description',
-            'short_description', 'is_paid', 'amount', 'driver'
+            'id',  'driver_id', 'violation_id', 'date_issued', 'deadline',
+            'is_paid', 'amount', 'driver', 'violation'
         )

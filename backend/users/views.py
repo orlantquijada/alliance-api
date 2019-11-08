@@ -63,6 +63,10 @@ class FeeViewSet(mixins.CreateModelMixin,
         if is_paid is not None:
             queryset = queryset.filter(is_paid=is_paid)
 
+        driver_id = serializer.validated_data.get('driver_id', None)
+        if driver_id:
+            queryset = queryset.filter(driver_id=driver_id)
+
         return queryset.all()
 
 
@@ -120,3 +124,15 @@ class UserViewSet(mixins.ListModelMixin,
             serializers.base.UserSerializer(user).data,
             status=status.HTTP_200_OK
         )
+
+
+class ViolationViewSet(mixins.CreateModelMixin,
+                       mixins.ListModelMixin,
+                       mixins.RetrieveModelMixin,
+                       mixins.UpdateModelMixin,
+                       viewsets.GenericViewSet):
+
+    # pylint: disable=no-member
+
+    queryset = models.Violation.objects.all()
+    serializer_class = serializers.base.ViolationSerializer
