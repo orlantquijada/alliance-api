@@ -54,8 +54,14 @@ STATUS_TYPES = (
     (TOW, 'Towed'),
     (OK, 'OK')
 )
+
+TOW_LIST = ('tow', 'Tow')
+COLLISION_LIST = ('collision', 'Collision')
+CLAMP_LIST = ('clamp', 'Clamp')
+TRAFFIC_VIOLATION_LIST = ('speeding', 'illegal parking',
+                          'illegal right turn', 'illegal left turn', 'no helment', 'no license')
 STATUS_TYPES_LIST = ('collision', 'Collision', 'tow',
-                     'Tow', 'clamp', 'Clamped')
+                     'Tow', 'clamp', 'Clamp')
 
 STATUS = 'S'
 VIOLATION = 'V'
@@ -66,5 +72,20 @@ NOTIFICATION_TYPES = (
 
 
 def status_points_map(val):
-    if val == STATUS_TYPES_LIST[0] or val == STATUS_TYPES_LIST[1]:
-        return 3
+    for t in TOW_LIST:
+        if t in val:
+            return 3
+
+    for c in COLLISION_LIST:
+        if c in val:
+            return 2
+
+    for c in CLAMP_LIST:
+        if c in val:
+            return 2
+
+    for t in TRAFFIC_VIOLATION_LIST:
+        if t in val:
+            return 1
+
+    return 0
