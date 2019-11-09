@@ -15,3 +15,4 @@ class VehicleQuerySerializer(serializers.Serializer):
 class NotificationQuerySerializer(serializers.Serializer):
     driver_id = serializers.IntegerField(required=False)
     is_viewed = serializers.NullBooleanField(required=False)
+    notification_type = serializers.CharField(max_length=1, required=False)

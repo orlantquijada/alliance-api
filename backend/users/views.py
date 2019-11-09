@@ -217,6 +217,11 @@ class NotificationViewSet(mixins.ListModelMixin,
         if is_viewed:
             queryset = queryset.filter(is_viewed=is_viewed)
 
+        notification_type = serializer.validated_data.get(
+            'notification_type', None)
+        if notification_type:
+            queryset = queryset.filter(notification_type=notification_type)
+
         return queryset.all()
 
     @action(detail=True, url_path='viewed', methods=['POST'])
