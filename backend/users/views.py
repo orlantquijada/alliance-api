@@ -218,3 +218,14 @@ class NotificationViewSet(mixins.ListModelMixin,
             queryset = queryset.filter(is_viewed=is_viewed)
 
         return queryset.all()
+
+    @action(detail=True, url_path='viewed', methods=['POST'])
+    def is_viewed_true(self, request, pk):
+        try:
+            notif = models.Notification.objects.get(id=pk)
+            notif.is_viewed = True
+            notif.save()
+        except models.Notification.DoesNotExist:
+            return Response({'Notification not found!'}, status=status.HTTP_400_BAD_REQUEST)
+
+        return Response(status=status.HTTP_200_OK)
