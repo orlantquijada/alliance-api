@@ -54,9 +54,17 @@ STATUS_TYPES = (
     (TOW, 'Towed'),
     (OK, 'OK')
 )
+STATUS_TYPES_LIST = ('collision', 'Collision', 'tow',
+                     'Tow', 'clamp', 'Clamped')
 
 STATUS = 'S'
 VIOLATION = 'V'
 NOTIFICATION_TYPES = (
-    ()
+    (STATUS, 'Status'),
+    (VIOLATION, 'Violation')
 )
+
+
+def status_points_map(val):
+    if val == STATUS_TYPES_LIST[0] or val == STATUS_TYPES_LIST[1]:
+        return 3
