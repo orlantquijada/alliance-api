@@ -2,7 +2,7 @@ from rest_framework import mixins, viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 
-from backend.users import models, serializers
+from backend.users import models, serializers, choices
 
 
 class ProfileViewSet(mixins.CreateModelMixin,
@@ -137,6 +137,31 @@ class ViolationViewSet(mixins.CreateModelMixin,
     queryset = models.Violation.objects.all()
     serializer_class = serializers.base.ViolationSerializer
 
+    def create(self, *args, **kwargs):
+        serializer = self.get_serializer(data=self.request.data)
+
+        if serializer.is_valid():
+            description = serializer.validated_data.get('description')
+            driver = serializer.validated_data.get('driver')
+
+            is_violation = True
+
+            for notif_type in choices.STATUS_TYPES_LIST:
+                if notif_type in description:
+                    is_violation = False
+                    break
+
+            models.Notification.objects.create(
+                driver=driver,
+                description=description,
+                notification_type=choices.VIOLATION if is_violation else choices.STATUS
+            )
+
+            super().create(*args, **kwargs)
+
+            return Response(serializer.data, status=status.HTTP_201_CREATED)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 class VehicleViewSet(mixins.CreateModelMixin,
                      mixins.ListModelMixin,
@@ -162,5 +187,34 @@ class VehicleViewSet(mixins.CreateModelMixin,
         driver_id = serializer.validated_data.get('driver_id', None)
         if driver_id:
             queryset = queryset.filter(driver_id=driver_id)
+
+        return queryset.all()
+
+
+class NotificationViewSet(mixins.ListModelMixin,
+                          mixins.RetrieveModelMixin,
+                          viewsets.GenericViewSet):
+
+    # pylint: disable=no-member
+
+    queryset = models.Notification.objects
+    serializer_class = serializers.base.NotificationSerializer
+
+    def get_queryset(self):
+        queryset = self.queryset
+
+        serializer = serializers.query.NotificationQuerySerializer(
+            data=self.request.query_params)
+
+        if not serializer.is_valid():
+            return queryset.all()
+
+        driver_id = serializer.validated_data.get('driver_id', None)
+        if driver_id:
+            queryset = queryset.filter(driver_id=driver_id)
+
+        is_viewed = serializer.validated_data.get('is_viewed', None)
+        if is_viewed:
+            queryset = queryset.filter(is_viewed=is_viewed)
 
         return queryset.all()

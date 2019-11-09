@@ -10,3 +10,8 @@ class FeeQuerySerializer(serializers.Serializer):
 
 class VehicleQuerySerializer(serializers.Serializer):
     driver_id = serializers.IntegerField(required=False)
+
+
+class NotificationQuerySerializer(serializers.Serializer):
+    driver_id = serializers.IntegerField(required=False)
+    is_viewed = serializers.NullBooleanField(required=False)

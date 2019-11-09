@@ -14,5 +14,6 @@ ROUTER.register('fees', views.FeeViewSet)
 ROUTER.register('users', views.UserViewSet)
 ROUTER.register('violations', views.ViolationViewSet)
 ROUTER.register('vehicles', views.VehicleViewSet)
+ROUTER.register('notifications', views.NotificationViewSet)
 
 url_patterns = path('', include(ROUTER.urls))

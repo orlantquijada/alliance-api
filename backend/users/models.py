@@ -103,8 +103,9 @@ class Violation(models.Model):
     description = models.TextField()
     datetime_issued = models.DateTimeField(
         'Datetime Issued')
-    parties_involved = models.CharField(
-        'Parties Involved', max_length=100, blank=True, null=True)
+    location = models.CharField(max_length=settings.MAX_LENGTH_ADDRESS)
+    driver = models.ForeignKey(Driver, on_delete=models.CASCADE)
+    is_counted = models.BooleanField(default=False)
 
     def __str__(self):
         return f'{self.name} - {self.datetime_issued}'
@@ -131,7 +132,7 @@ class Vehicle(models.Model):
     model = models.CharField(max_length=settings.MAX_LENGTH_NAME)
     year = models.PositiveIntegerField()
     plate_number = models.CharField(
-        max_length=settings.MAX_LENGTH_PLATE_NUMBER)
+        'Plate Number', max_length=settings.MAX_LENGTH_PLATE_NUMBER)
 
     status_type = models.CharField(
         max_length=2, choices=choices.STATUS_TYPES, default=choices.OK)
@@ -152,6 +153,8 @@ class Notification(models.Model):
     is_viewed = models.BooleanField(default=False)
     description = models.CharField(
         max_length=settings.MAX_LENGTH_SHORT_DESCRIPTION)
+    notification_type = models.CharField(
+        'Notification Type', max_length=1, choices=choices.STATUS_TYPES)
 
     class Meta:
         default_related_name = 'notifications'
@@ -161,3 +164,24 @@ class Notification(models.Model):
 
         viewed = 'viewed' if self.is_viewed else 'not viewed'
         return f'{self.driver.profile.full_name} - {viewed}'
+
+
+class PartyInvolved(models.Model):
+    license = models.ForeignKey(
+        License, on_delete=models.CASCADE, null=True, blank=True)
+    vehicle = models.ForeignKey(
+        Vehicle, on_delete=models.CASCADE, null=True, blank=True)
+
+    involvement_description = models.CharField(
+        'Involvement Description', max_length=settings.MAX_LENGTH_SHORT_DESCRIPTION)
+
+    violation = models.ForeignKey(Violation, on_delete=models.CASCADE)
+
+    class Meta:
+        default_related_name = 'parties_involved'
+
+    def __str__(self) -> str:
+        # pylint: disable=no-member
+
+        s = self.vehicle.plate_number if self.vehicle else self.license.license_number
+        return f'{s} - {self.violation}'
