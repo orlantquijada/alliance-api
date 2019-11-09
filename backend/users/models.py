@@ -154,7 +154,7 @@ class Notification(models.Model):
     description = models.CharField(
         max_length=settings.MAX_LENGTH_SHORT_DESCRIPTION)
     notification_type = models.CharField(
-        'Notification Type', max_length=1, choices=choices.STATUS_TYPES)
+        'Notification Type', max_length=1, choices=choices.NOTIFICATION_TYPES)
 
     class Meta:
         default_related_name = 'notifications'
