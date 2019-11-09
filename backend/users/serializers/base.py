@@ -1,4 +1,5 @@
 from rest_framework import serializers
+from drf_extra_fields.fields import Base64ImageField
 
 from backend.users import models
 from backend.utils import globals
@@ -8,7 +9,7 @@ class ProfileSerializer(serializers.ModelSerializer):
     birth_date = serializers.DateField(
         format=globals.DATE_FORMAT, input_formats=(globals.DATE_FORMAT,))
 
-    # points = serializers.SerializerMethodField(method_name='_get_points')
+    profile_pic = Base64ImageField(required=False)
 
     class Meta:
         model = models.Profile
