@@ -1,7 +1,7 @@
 from rest_framework import serializers
 from drf_extra_fields.fields import Base64ImageField
 
-from backend.users import models
+from backend.users import models, choices
 from backend.utils import globals
 
 
@@ -10,6 +10,7 @@ class ProfileSerializer(serializers.ModelSerializer):
         format=globals.DATE_FORMAT, input_formats=(globals.DATE_FORMAT,))
 
     profile_pic = Base64ImageField(required=False)
+    points = serializers.SerializerMethodField(method_name='_get_points')
 
     class Meta:
         model = models.Profile
@@ -19,6 +20,23 @@ class ProfileSerializer(serializers.ModelSerializer):
             'blood_type', 'eye_color', 'height', 'weight', 'nationality',
             'birth_date', 'points'
         )
+
+    def _get_points(self, obj) -> int:
+        # pylint: disable=no-member
+
+        vs = models.Violation.objects.filter(
+            driver=obj.driver).filter(is_counted=False)
+
+        points = 0
+        for v in vs:
+            points += choices.status_points_map(v.description)
+
+        vs.update(is_counted=True)
+
+        obj.points -= points
+        obj.save()
+
+        return obj.points
 
 
 class LicenseSerializer(serializers.ModelSerializer):
